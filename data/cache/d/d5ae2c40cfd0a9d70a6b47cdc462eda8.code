@@ -1,0 +1,25 @@
+DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">FUNCTION</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> validate_user$$
+&nbsp;
+<span class="kw1">CREATE</span> <span class="kw1">FUNCTION</span> validate_user <span class="br0">&#40;</span>nnickname <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">32</span><span class="br0">&#41;</span><span class="sy0">,</span> pass <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+&nbsp;
+<span class="kw1">RETURNS</span> <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span>
+DETERMINISTIC
+&nbsp;
+<span class="kw1">BEGIN</span>
+  <span class="kw1">DECLARE</span> p_hash <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span>;
+  <span class="kw1">DECLARE</span> t_hash <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="kw1">SET</span> p_hash <span class="sy0">=</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> password <span class="kw1">FROM</span> users <span class="kw1">WHERE</span> nickname <span class="sy0">=</span> nnickname<span class="br0">&#41;</span>;
+  <span class="kw1">SET</span> t_hash <span class="sy0">=</span> SHA2<span class="br0">&#40;</span>pass<span class="sy0">,</span><span class="nu0">512</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="kw1">IF</span> STRCMP<span class="br0">&#40;</span>p_hash<span class="sy0">,</span>t_hash<span class="br0">&#41;</span> <span class="sy0">=</span> <span class="nu0">0</span> <span class="kw1">THEN</span> 
+    <span class="kw1">RETURN</span> uid;
+  <span class="kw1">ELSE</span>
+   <span class="kw1">RETURN</span> <span class="st0">'-1'</span>;
+  <span class="kw1">END</span> <span class="kw1">IF</span>;
+&nbsp;
+<span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;

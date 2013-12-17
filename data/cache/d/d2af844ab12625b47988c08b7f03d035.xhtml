@@ -1,0 +1,110 @@
+
+<h2 class="sectionedit1" id="about">About</h2>
+<div class="level2">
+
+<p>
+The network server for Freetable Provides the network services needed to keep the network in sync.  Just metadata is stored with the network services.
+</p>
+
+</div>
+<!-- EDIT1 SECTION "About" [1-168] -->
+<h2 class="sectionedit2" id="problem">Problem</h2>
+<div class="level2">
+
+<p>
+For roaming profiles to work there must be some sort of central repository of information that we can all agree upon.
+</p>
+
+</div>
+<!-- EDIT2 SECTION "Problem" [169-305] -->
+<h2 class="sectionedit3" id="solution">Solution</h2>
+<div class="level2">
+
+<p>
+Using a combination of SQL, PHP and Nginx we can achieve lazy load balancing very easy while maintaining a consistent dataset.
+</p>
+
+</div>
+<!-- EDIT3 SECTION "Solution" [306-452] -->
+<h3 class="sectionedit4" id="hardware">Hardware</h3>
+<div class="level3">
+
+<p>
+Just about anything can be used for hardware.  We suggest at least 4 <abbr title="Gigabyte">GB</abbr> of RAM, and at least 100 <abbr title="Gigabyte">GB</abbr> of live growable partition with solid state speeds.  We suggest at least 4 64 bit cores.  The main operating system Freetable was designed for was Debian Linux.  However, there is no reason that any operating system that supports Percona, Nginx, and PHP could be used in place of Debian Linux.
+</p>
+
+</div>
+<!-- EDIT4 SECTION "Hardware" [453-864] -->
+<h3 class="sectionedit5" id="software">Software</h3>
+<div class="level3">
+
+<p>
+Our software stack for the network services consists of nginx, PHP, and SQL.  A SQL proxy / caching layer should be added here to speed up read queries.  HA-proxy can be used to split the incoming queries between a read only read pool and the write server.  This allows for a pool of read slaves to act as load offloaders.
+</p>
+
+</div>
+
+<h4 id="nginx">Nginx</h4>
+<div class="level4">
+
+<p>
+Nothing really special is needed from Nginx.  We configure Nginx to use PHP-FPM in the backend and set it for file based communication.  You could also socket based communication and offload the PHP to another server.  However, Nginx is so light it&#039;s very hard to justify ever needing to do this when smarter things like ha-proxy upstream can distribute the load so much better.
+</p>
+
+</div>
+
+<h4 id="php">PHP</h4>
+<div class="level4">
+
+<p>
+PHP will use the PHP-FPM configuration to maintain a scalable PHP process pool.  The suggestion is to set the max threads to 4x what max processors of the server is.  No additional special configuration is needed from php.
+</p>
+
+<p>
+Modules Needed:
+</p>
+<ul>
+<li class="level1"><div class="li"> php-mysql</div>
+</li>
+<li class="level1"><div class="li"> php-json</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="sql">SQL</h4>
+<div class="level4">
+
+<p>
+Percona Server will be used as a drop in, high end replacement for MySQL.  Freetable network services will rely heavily on store procedures and Percona internals to keep the data set consistent.  
+</p>
+
+</div>
+<!-- EDIT5 SECTION "Software" [865-2084] -->
+<h2 class="sectionedit6" id="defined_functions">Defined Functions</h2>
+<div class="level2">
+
+<p>
+<a href="/doku.php?id=network_services_database_defined_functions" class="wikilink1" title="network_services_database_defined_functions">Network Services Database Defined Functions</a>
+</p>
+
+<p>
+<a href="/doku.php?id=network_services_server_frontend_defined_functions" class="wikilink2" title="network_services_server_frontend_defined_functions" rel="nofollow">Network Services Server Frontend Defined Functions</a>
+</p>
+
+<p>
+<a href="/doku.php?id=network_services_client_frontend_defined_functions" class="wikilink2" title="network_services_client_frontend_defined_functions" rel="nofollow">Network Services Client Frontend Defined Functions</a>
+</p>
+
+</div>
+<!-- EDIT6 SECTION "Defined Functions" [2085-2273] -->
+<h2 class="sectionedit7" id="external_links">External Links</h2>
+<div class="level2">
+
+</div>
+<!-- EDIT7 SECTION "External Links" [2274-2298] -->
+<h2 class="sectionedit8" id="notes">Notes</h2>
+<div class="level2">
+
+</div>
+<!-- EDIT8 SECTION "Notes" [2299-] -->

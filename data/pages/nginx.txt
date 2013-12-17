@@ -1,0 +1,9 @@
+=====About=====
+Nginx (pronounced engine-x) is a free, open-source, high-performance HTTP server and reverse proxy, as well as an IMAP/POP3 proxy server. Nginx is known for its high performance, stability, rich feature set, simple configuration, and low resource consumption.
+=====Where we use it=====
+Nginx is used as the front end HTTP server for the network services nodes.
+=====Why we use it=====
+Nginx is very simple, complete, and fast.  It's everything we will ever need in an HTTP server.
+=====External Links=====
+[[http://wiki.nginx.org/Main]]
+=====Notes=====

@@ -1,0 +1,9 @@
+DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_sprite$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_sprite <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> bdata <span class="kw1">BLOB</span><span class="sy0">,</span> <span class="kw1">TYPE</span> <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> sprite_blob <span class="sy0">=</span> bdata<span class="sy0">,</span> sprite_type <span class="sy0">=</span> <span class="kw1">TYPE</span> <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;

@@ -1,0 +1,15 @@
+DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">FUNCTION</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> get_current_file$$
+<span class="kw1">CREATE</span> <span class="kw1">FUNCTION</span> get_current_file <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+&nbsp;
+<span class="kw1">RETURNS</span> <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span>
+DETERMINISTIC
+&nbsp;
+  <span class="kw1">BEGIN</span>
+&nbsp;
+    <span class="kw1">RETURN</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> WWSONGID <span class="kw1">FROM</span> playlists <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid <span class="kw1">AND</span> playlist_number <span class="sy0">=</span> <span class="br0">&#40;</span> <span class="kw1">SELECT</span> playlist_number <span class="kw1">FROM</span> users_current_playlist <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid <span class="br0">&#41;</span> <span class="kw1">AND</span> order_number <span class="sy0">=</span> <span class="nu0">0</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;

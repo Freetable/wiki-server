@@ -1,0 +1,16 @@
+=====About=====
+Percona Server is an enhanced, drop-in MySQL® replacement which has been downloaded more than 700,000 times.
+
+=====Where we use it=====
+We use Percona Server and Percona XtraDB to link the network services together.  Each network service location has at least one of these.
+
+=====Why we use it=====
+Percona is basically a very tricked out version of MySQL that allows for high performance and many multi master replication.  Percona is still ACID complaint.
+
+=====External Links=====
+[[http://www.percona.com/software/percona-server]]
+
+[[http://www.percona.com/software/percona-xtradb-cluster]]
+
+=====Notes=====
+There are other alternatives that can be used here, but they all have trade offs.  Anything that can be considered as a replacement needs to be ACID compliant and support multi master replication.

@@ -1,0 +1,9 @@
+=====About=====
+GridFS is a specification for storing and retrieving files that exceed the BSON-document size limit of 16MB.
+=====Where we use it=====
+Freetable file servers rely on GridFS for file storage.
+=====Why we use it=====
+It's very simple to use and fits our needs perfectly!
+=====External Links=====
+[[http://docs.mongodb.org/manual/core/gridfs/]]
+=====Notes=====

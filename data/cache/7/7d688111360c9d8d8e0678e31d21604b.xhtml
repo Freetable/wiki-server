@@ -1,0 +1,1165 @@
+
+<p>
+This is a list of every function that needs to be implemented by layer
+</p>
+
+<h2 class="sectionedit1" id="sql_stored_functions">SQL Stored Functions</h2>
+<div class="level2">
+
+</div>
+<!-- EDIT1 SECTION "SQL Stored Functions" [72-102] -->
+<h3 class="sectionedit2" id="create_random_hash_bits_int_unsigned">create_random_hash(bits INT UNSIGNED)</h3>
+<div class="level3">
+
+<p>
+create_random_hash is used to generate unique identifiers
+</p>
+
+</div>
+
+<h4 id="input">Input</h4>
+<div class="level4">
+
+</div>
+
+<h5 id="bits_int_unsigned">bits INT UNSIGNED</h5>
+<div class="level5">
+<ul>
+<li class="level1"><div class="li"> bits – bit is used to define how long the random string needs to be.</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output">Output</h4>
+<div class="level4">
+
+<p>
+Output is the newly generated hash.
+</p>
+
+</div>
+
+<h4 id="code">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=0" title="Download Snippet" class="mediafile mf_sql">create_random_hash.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">FUNCTION</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> create_random_hash$$
+<span class="kw1">CREATE</span> <span class="kw1">FUNCTION</span> create_random_hash <span class="br0">&#40;</span>bits <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="br0">&#41;</span>
+&nbsp;
+<span class="kw1">RETURNS</span> TEXT
+DETERMINISTIC
+&nbsp;
+  <span class="kw1">BEGIN</span>
+&nbsp;
+  <span class="kw1">DECLARE</span> output TEXT <span class="kw1">DEFAULT</span> <span class="st0">''</span>;
+&nbsp;
+  <span class="kw1">IF</span> bits <span class="sy0">&gt;</span> <span class="nu0">7</span> <span class="kw1">THEN</span> <span class="kw1">BEGIN</span>
+&nbsp;
+	<span class="kw1">DECLARE</span> counter <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span>;
+	<span class="kw1">DECLARE</span> newcharacter <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">1</span><span class="br0">&#41;</span>;
+&nbsp;
+	<span class="kw1">SET</span> counter <span class="sy0">=</span> <span class="nu0">0</span>;
+&nbsp;
+	WHILE counter <span class="sy0">&lt;</span> bits DO
+&nbsp;
+	  <span class="kw1">SET</span> newcharacter <span class="sy0">=</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> ELT<span class="br0">&#40;</span><span class="nu0">1</span> <span class="sy0">+</span> <span class="kw1">FLOOR</span><span class="br0">&#40;</span>RAND<span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="sy0">*</span> <span class="nu0">63</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="st0">'A'</span><span class="sy0">,</span><span class="st0">'B'</span><span class="sy0">,</span><span class="st0">'C'</span><span class="sy0">,</span><span class="st0">'D'</span><span class="sy0">,</span><span class="st0">'E'</span><span class="sy0">,</span><span class="st0">'F'</span><span class="sy0">,</span><span class="st0">'G'</span><span class="sy0">,</span><span class="st0">'H'</span><span class="sy0">,</span><span class="st0">'I'</span><span class="sy0">,</span><span class="st0">'J'</span><span class="sy0">,</span><span class="st0">'K'</span><span class="sy0">,</span><span class="st0">'L'</span><span class="sy0">,</span><span class="st0">'M'</span><span class="sy0">,</span><span class="st0">'N'</span><span class="sy0">,</span><span class="st0">'O'</span><span class="sy0">,</span><span class="st0">'P'</span><span class="sy0">,</span><span class="st0">'Q'</span><span class="sy0">,</span><span class="st0">'R'</span><span class="sy0">,</span><span class="st0">'S'</span><span class="sy0">,</span><span class="st0">'T'</span><span class="sy0">,</span><span class="st0">'U'</span><span class="sy0">,</span><span class="st0">'V'</span><span class="sy0">,</span><span class="st0">'W'</span><span class="sy0">,</span><span class="st0">'X'</span><span class="sy0">,</span><span class="st0">'Y'</span><span class="sy0">,</span><span class="st0">'Z'</span><span class="sy0">,</span><span class="st0">'a'</span><span class="sy0">,</span><span class="st0">'b'</span><span class="sy0">,</span><span class="st0">'c'</span><span class="sy0">,</span><span class="st0">'d'</span><span class="sy0">,</span><span class="st0">'e'</span><span class="sy0">,</span><span class="st0">'f'</span><span class="sy0">,</span><span class="st0">'g'</span><span class="sy0">,</span><span class="st0">'h'</span><span class="sy0">,</span><span class="st0">'i'</span><span class="sy0">,</span><span class="st0">'j'</span><span class="sy0">,</span><span class="st0">'k'</span><span class="sy0">,</span><span class="st0">'l'</span><span class="sy0">,</span><span class="st0">'m'</span><span class="sy0">,</span><span class="st0">'n'</span><span class="sy0">,</span><span class="st0">'o'</span><span class="sy0">,</span><span class="st0">'p'</span><span class="sy0">,</span><span class="st0">'q'</span><span class="sy0">,</span><span class="st0">'u'</span><span class="sy0">,</span><span class="st0">'r'</span><span class="sy0">,</span><span class="st0">'s'</span><span class="sy0">,</span><span class="st0">'t'</span><span class="sy0">,</span><span class="st0">'u'</span><span class="sy0">,</span><span class="st0">'v'</span><span class="sy0">,</span><span class="st0">'w'</span><span class="sy0">,</span><span class="st0">'x'</span><span class="sy0">,</span><span class="st0">'y'</span><span class="sy0">,</span><span class="st0">'z'</span><span class="sy0">,</span><span class="st0">'0'</span><span class="sy0">,</span><span class="st0">'1'</span><span class="sy0">,</span><span class="st0">'2'</span><span class="sy0">,</span><span class="st0">'3'</span><span class="sy0">,</span><span class="st0">'4'</span><span class="sy0">,</span><span class="st0">'5'</span><span class="sy0">,</span><span class="st0">'6'</span><span class="sy0">,</span><span class="st0">'7'</span><span class="sy0">,</span><span class="st0">'8'</span><span class="sy0">,</span><span class="st0">'9'</span> <span class="br0">&#41;</span><span class="br0">&#41;</span>;
+	  <span class="kw1">SET</span> output <span class="sy0">=</span> CONCAT<span class="br0">&#40;</span>output<span class="sy0">,</span>newcharacter<span class="br0">&#41;</span>;
+	  <span class="kw1">SET</span> counter <span class="sy0">=</span> counter <span class="sy0">+</span> <span class="nu0">1</span>;
+&nbsp;
+	<span class="kw1">END</span> WHILE;
+      <span class="kw1">END</span>;
+  <span class="kw1">ELSE</span>
+      <span class="kw1">BEGIN</span>
+	<span class="kw1">SET</span> output <span class="sy0">=</span> <span class="st0">'-1'</span>;
+      <span class="kw1">END</span>;
+  <span class="kw1">END</span> <span class="kw1">IF</span>;
+&nbsp;
+  <span class="kw1">RETURN</span> output;
+&nbsp;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT2 SECTION "create_random_hash(bits INT UNSIGNED)" [103-1280] -->
+<h3 class="sectionedit3" id="create_wwuserid">create_wwuserid</h3>
+<div class="level3">
+
+<p>
+This safely creates a new unique user in the system.  Must wrap in a write lock.
+</p>
+<pre class="code sql"><span class="kw1">LOCK</span> <span class="kw1">TABLES</span> users <span class="kw1">WRITE</span>;
+<span class="kw1">SELECT</span> create_wwuserid<span class="br0">&#40;</span><span class="br0">&#41;</span>;
+<span class="kw1">UNLOCK</span> <span class="kw1">TABLES</span>;</pre>
+
+</div>
+
+<h4 id="input1">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> Nothing</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output1">Output</h4>
+<div class="level4">
+
+<p>
+Returns valid new WWUSERID.
+</p>
+
+</div>
+
+<h4 id="code1">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=2" title="Download Snippet" class="mediafile mf_sql">create_wwuserid.sql</a></dt>
+<dd><pre class="code file sql"><span class="co1">-- MUST WRITE LOCK USERS BEFORE ISSUING THIS COMMAND!</span>
+&nbsp;
+DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">FUNCTION</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> create_wwuserid$$
+<span class="kw1">CREATE</span> <span class="kw1">FUNCTION</span> create_wwuserid <span class="br0">&#40;</span><span class="br0">&#41;</span>
+&nbsp;
+<span class="kw1">RETURNS</span> <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span>
+DETERMINISTIC
+&nbsp;
+  <span class="kw1">BEGIN</span>
+&nbsp;
+  <span class="kw1">DECLARE</span> output <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span>;
+  <span class="kw1">DECLARE</span> done_bool BOOL;
+  <span class="kw1">DECLARE</span> count_test <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span>;
+&nbsp;
+  <span class="kw1">SET</span> @username <span class="sy0">=</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> create_random_hash<span class="br0">&#40;</span><span class="nu0">32</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+  <span class="kw1">SET</span> output <span class="sy0">=</span> <span class="st0">'-1'</span>;
+  <span class="kw1">SET</span> done_bool <span class="sy0">=</span> <span class="kw1">FALSE</span>;
+&nbsp;
+  WHILE done_bool <span class="sy0">=</span> <span class="kw1">FALSE</span> DO
+    <span class="kw1">SET</span> done_bool <span class="sy0">=</span> <span class="kw1">TRUE</span>;
+    <span class="kw1">SET</span> @hash <span class="sy0">=</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> create_random_hash<span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+    <span class="kw1">IF</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> <span class="kw1">COUNT</span><span class="br0">&#40;</span><span class="br0">&#40;</span><span class="kw1">SELECT</span> WWUSERID <span class="kw1">FROM</span> users <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> @hash<span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="sy0">=</span> <span class="nu0">0</span> <span class="kw1">THEN</span> 
+      <span class="kw1">BEGIN</span>
+      <span class="co1">-- Try to create it</span>
+	<span class="kw1">INSERT</span> <span class="kw1">INTO</span> users <span class="kw1">SET</span> WWUSERID <span class="sy0">=</span> @hash<span class="sy0">,</span> nickname <span class="sy0">=</span> @username;
+      <span class="kw1">END</span>;
+    <span class="kw1">ELSE</span>
+      <span class="kw1">BEGIN</span>
+      <span class="co1">-- Back around the loop</span>
+      <span class="kw1">SET</span> done_bool <span class="sy0">=</span> <span class="kw1">FALSE</span>;
+      <span class="kw1">END</span>;
+    <span class="kw1">END</span> <span class="kw1">IF</span>;
+&nbsp;
+  <span class="kw1">END</span> WHILE;
+&nbsp;
+  <span class="kw1">RETURN</span> hash;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT3 SECTION "create_wwuserid" [1281-2447] -->
+<h3 class="sectionedit4" id="set_password_username_varchar_32_pass_varchar_128">set_password (username VARCHAR(32), pass VARCHAR(128))</h3>
+<div class="level3">
+
+<p>
+Use this to set a users password.
+</p>
+
+</div>
+
+<h4 id="input2">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> username VARCHAR(32) nickname of user</div>
+</li>
+<li class="level1"><div class="li"> pass VARCHAR(128) password of user</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output2">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code2">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=3" title="Download Snippet" class="mediafile mf_sql">set_password.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_password$$
+&nbsp;
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_password <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> pass <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+&nbsp;
+<span class="kw1">BEGIN</span>
+  <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> password <span class="sy0">=</span> SHA2<span class="br0">&#40;</span>pass<span class="sy0">,</span><span class="nu0">512</span><span class="br0">&#41;</span> <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+<span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT4 SECTION "set_password (username VARCHAR(32), pass VARCHAR(128))" [2448-2922] -->
+<h3 class="sectionedit5" id="validate_user_username_varchar_32_pass_varchar_128">validate_user(username VARCHAR(32), pass VARCHAR(128))</h3>
+<div class="level3">
+
+<p>
+Verify that a user gave us the valid password.
+</p>
+
+</div>
+
+<h4 id="input3">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> username VARCHAR(32) nickname of user</div>
+</li>
+<li class="level1"><div class="li"> pass VARCHAR(128) password of user</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output3">Output</h4>
+<div class="level4">
+
+<p>
+Return WWUSERID or -1 if failed
+</p>
+
+</div>
+
+<h4 id="code3">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=4" title="Download Snippet" class="mediafile mf_sql">validate_user.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">FUNCTION</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> validate_user$$
+&nbsp;
+<span class="kw1">CREATE</span> <span class="kw1">FUNCTION</span> validate_user <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> pass <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+&nbsp;
+<span class="kw1">RETURNS</span> <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span>
+DETERMINISTIC
+&nbsp;
+<span class="kw1">BEGIN</span>
+  <span class="kw1">DECLARE</span> p_hash <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span>;
+  <span class="kw1">DECLARE</span> t_hash <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span>;
+  <span class="kw1">SET</span> @my_uid <span class="sy0">=</span> uid;
+&nbsp;
+  <span class="kw1">SET</span> p_hash <span class="sy0">=</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> password <span class="kw1">FROM</span> users <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> @my_uid<span class="br0">&#41;</span>;
+  <span class="kw1">SET</span> t_hash <span class="sy0">=</span> SHA2<span class="br0">&#40;</span>pass<span class="sy0">,</span><span class="nu0">512</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="kw1">IF</span> STRCMP<span class="br0">&#40;</span>p_hash<span class="sy0">,</span>t_hash<span class="br0">&#41;</span> <span class="sy0">=</span> <span class="nu0">0</span> <span class="kw1">THEN</span> 
+    <span class="kw1">RETURN</span> uid;
+  <span class="kw1">ELSE</span>
+   <span class="kw1">RETURN</span> <span class="st0">'-1'</span>;
+  <span class="kw1">END</span> <span class="kw1">IF</span>;
+&nbsp;
+<span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT5 SECTION "validate_user(username VARCHAR(32), pass VARCHAR(128))" [2923-3685] -->
+<h3 class="sectionedit6" id="query_user_uid_char_255">query_user(uid CHAR(255))</h3>
+<div class="level3">
+
+<p>
+Get the basic information of a user.
+</p>
+
+</div>
+
+<h4 id="input4">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> Users UID</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output4">Output</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> email</div>
+</li>
+<li class="level1"><div class="li"> nickname</div>
+</li>
+<li class="level1"><div class="li"> first name</div>
+</li>
+<li class="level1"><div class="li"> last name</div>
+</li>
+<li class="level1"><div class="li"> short description</div>
+</li>
+<li class="level1"><div class="li"> long description</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="code4">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=5" title="Download Snippet" class="mediafile mf_sql">query_user.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> query_user$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> query_user <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">SELECT</span> email<span class="sy0">,</span> nickname<span class="sy0">,</span> first_name<span class="sy0">,</span> last_name<span class="sy0">,</span> short_description<span class="sy0">,</span> long_description <span class="kw1">FROM</span> users <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT6 SECTION "query_user(uid CHAR(255))" [3686-4186] -->
+<h3 class="sectionedit7" id="set_user_email_uid_char_255_eemail_varchar_96">set_user_email(uid CHAR(255), eemail VARCHAR(96))</h3>
+<div class="level3">
+
+<p>
+Change a users email.
+</p>
+
+</div>
+
+<h4 id="input5">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID  – World wide userid</div>
+</li>
+<li class="level1"><div class="li"> email – New email address</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output5">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code5">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=6" title="Download Snippet" class="mediafile mf_sql">set_user_email.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_user_email$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_user_email <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> eemail <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">96</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> email <span class="sy0">=</span> eemail <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid; 
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT7 SECTION "set_user_email(uid CHAR(255), eemail VARCHAR(96))" [4187-4632] -->
+<h3 class="sectionedit8" id="set_user_nickname_uid_char_255_nickname_varchar_32">set_user_nickname(uid CHAR(255), nickname VARCHAR(32))</h3>
+<div class="level3">
+
+<p>
+Change a users nickname.
+</p>
+
+</div>
+
+<h4 id="input6">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+<li class="level1"><div class="li"> new nickname</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output6">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code6">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=7" title="Download Snippet" class="mediafile mf_sql">set_user_nickname.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_user_nickname$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_user_nickname <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> nnickname <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">32</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> nickname <span class="sy0">=</span> nnickname <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid; 
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT8 SECTION "set_user_nickname(uid CHAR(255), nickname VARCHAR(32))" [4633-5068] -->
+<h3 class="sectionedit9" id="set_user_first_name_uid_char_255_first_name_varchar_32">set_user_first_name(uid CHAR(255), first_name VARCHAR(32))</h3>
+<div class="level3">
+
+<p>
+Change a user&#039;s first name.
+</p>
+
+</div>
+
+<h4 id="input7">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+<li class="level1"><div class="li"> New First name</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output7">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code7">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=8" title="Download Snippet" class="mediafile mf_sql">set_user_first_name.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_user_first_name$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_user_first_name <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> ffirst_name <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">32</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> last_name <span class="sy0">=</span> ffirst_name <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid; 
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT9 SECTION "set_user_first_name(uid CHAR(255), first_name VARCHAR(32))" [5069-5524] -->
+<h3 class="sectionedit10" id="set_user_last_name_uid_char_255_last_name_varchar_32">set_user_last_name(uid CHAR(255), last_name VARCHAR(32))</h3>
+<div class="level3">
+
+<p>
+Change a user&#039;s last name.
+</p>
+
+</div>
+
+<h4 id="input8">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+<li class="level1"><div class="li"> New Last name</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output8">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code8">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=9" title="Download Snippet" class="mediafile mf_sql">set_user_last_name.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_user_last_name$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_user_last_name <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> llast_name <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">32</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> last_name <span class="sy0">=</span> llast_name <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid; 
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT10 SECTION "set_user_last_name(uid CHAR(255), last_name VARCHAR(32))" [5525-5971] -->
+<h3 class="sectionedit11" id="set_user_short_descr_uid_char_255_short_description_varchar_1024">set_user_short_descr(uid CHAR(255), short_description VARCHAR(1024))</h3>
+<div class="level3">
+
+<p>
+Change a user&#039;s short description.
+</p>
+
+</div>
+
+<h4 id="input9">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+<li class="level1"><div class="li"> short description</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output9">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code9">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=10" title="Download Snippet" class="mediafile mf_sql">set_user_short_descr.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_user_short_descr$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_user_short_descr <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> sshort_descr <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">1024</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> short_description <span class="sy0">=</span> sshort_descr <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid; 
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT11 SECTION "set_user_short_descr(uid CHAR(255), short_description VARCHAR(1024))" [5972-6461] -->
+<h3 class="sectionedit12" id="set_user_long_descr_uid_char_255_llong_description_text">set_user_long_descr(uid CHAR(255), llong_description TEXT)</h3>
+<div class="level3">
+
+<p>
+Change a user&#039;s long description.
+</p>
+
+</div>
+
+<h4 id="input10">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+<li class="level1"><div class="li"> New long description</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output10">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code10">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=11" title="Download Snippet" class="mediafile mf_sql">set_user_long_descr.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_user_long_descr$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_user_long_descr <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> llong_description TEXT<span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> long_description <span class="sy0">=</span> llong_description <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid; 
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT12 SECTION "set_user_long_descr(uid CHAR(255), llong_description TEXT)" [6462-6940] -->
+<h3 class="sectionedit13" id="delete_user_uid_char_255">delete_user(uid CHAR(255))</h3>
+<div class="level3">
+
+<p>
+Delete a user from the system
+</p>
+
+</div>
+
+<h4 id="input11">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output11">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code11">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=12" title="Download Snippet" class="mediafile mf_sql">delete_user.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> delete_user$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> delete_user <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">DELETE</span> <span class="kw1">FROM</span> users <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid; 
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT13 SECTION "delete_user(uid CHAR(255))" [6941-7275] -->
+<h3 class="sectionedit14" id="get_current_file_uid_char_255">get_current_file(uid CHAR(255))</h3>
+<div class="level3">
+
+<p>
+Get a users top song from their active playlist
+</p>
+
+</div>
+
+<h4 id="input12">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output12">Output</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWSONGID</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="code12">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=13" title="Download Snippet" class="mediafile mf_sql">get_current_file.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">FUNCTION</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> get_current_file$$
+<span class="kw1">CREATE</span> <span class="kw1">FUNCTION</span> get_current_file <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+&nbsp;
+<span class="kw1">RETURNS</span> <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span>
+DETERMINISTIC
+&nbsp;
+  <span class="kw1">BEGIN</span>
+&nbsp;
+    <span class="kw1">RETURN</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> WWSONGID <span class="kw1">FROM</span> playlists <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid <span class="kw1">AND</span> playlist_number <span class="sy0">=</span> <span class="br0">&#40;</span> <span class="kw1">SELECT</span> playlist_number <span class="kw1">FROM</span> users_current_playlist <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid <span class="br0">&#41;</span> <span class="kw1">AND</span> order_number <span class="sy0">=</span> <span class="nu0">0</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT14 SECTION "get_current_file(uid CHAR(255))" [7276-7828] -->
+<h3 class="sectionedit15" id="set_current_playlist_uid_char_255_pplaylist_number_int_unsigned">set_current_playlist(uid CHAR(255)), pplaylist_number INT UNSIGNED)</h3>
+<div class="level3">
+
+<p>
+Set a users current playlist.
+</p>
+
+</div>
+
+<h4 id="input13">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+<li class="level1"><div class="li"> new playlist number</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output13">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code13">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=14" title="Download Snippet" class="mediafile mf_sql">set_current_playlist.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">FUNCTION</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_current_playlist$$
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_current_playlist$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_current_playlist <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> pplaylist_number <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+&nbsp;
+    <span class="kw1">UPDATE</span> users_current_playlist <span class="kw1">SET</span> playlist_number <span class="sy0">=</span> pplaylist_number <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+&nbsp;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT15 SECTION "set_current_playlist(uid CHAR(255)), pplaylist_number INT UNSIGNED)" [7829-8386] -->
+<h3 class="sectionedit16" id="get_playlist_uid_char_255_pplaylist_number_int_unsigned">get_playlist(uid CHAR(255), pplaylist_number INT UNSIGNED)</h3>
+<div class="level3">
+
+<p>
+Get a users current playlist.
+</p>
+
+</div>
+
+<h4 id="input14">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+<li class="level1"><div class="li"> new playlist number</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output14">Output</h4>
+<div class="level4">
+
+<p>
+Songs in current playlist
+</p>
+
+</div>
+
+<h4 id="code14">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=15" title="Download Snippet" class="mediafile mf_sql">get_playlist.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> get_playlist$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> get_playlist <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> pplaylist_number <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+&nbsp;
+    <span class="kw1">SELECT</span> WWSONGID <span class="kw1">FROM</span> playlists <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid <span class="kw1">AND</span> playlist_number <span class="sy0">=</span> <span class="br0">&#40;</span> <span class="kw1">SELECT</span> playlist_number <span class="kw1">FROM</span> users_current_playlist <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid <span class="br0">&#41;</span>;
+&nbsp;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT16 SECTION "get_playlist(uid CHAR(255), pplaylist_number INT UNSIGNED)" [8387-8942] -->
+<h3 class="sectionedit17" id="get_avatar_uid_char_255">get_avatar(uid CHAR(255))</h3>
+<div class="level3">
+
+<p>
+Get a user&#039;s avatar.
+</p>
+
+</div>
+
+<h4 id="input15">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output15">Output</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> Binary Blob </div>
+</li>
+<li class="level1"><div class="li"> Type</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="code15">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=16" title="Download Snippet" class="mediafile mf_sql">get_avatar.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> get_avatar$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> get_avatar <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">SELECT</span> avatar_blob<span class="sy0">,</span> avatar_type <span class="kw1">FROM</span> users <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT17 SECTION "get_avatar(uid CHAR(255))" [8943-9305] -->
+<h3 class="sectionedit18" id="get_sprite_uid_char_255">get_sprite(uid CHAR(255))</h3>
+<div class="level3">
+
+<p>
+Get a user&#039;s sprite.
+</p>
+
+</div>
+
+<h4 id="input16">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output16">Output</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> Binary Blob</div>
+</li>
+<li class="level1"><div class="li"> Type</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="code16">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=17" title="Download Snippet" class="mediafile mf_sql">get_sprite.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> get_sprite$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> get_sprite <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">SELECT</span> sprite_blob<span class="sy0">,</span> sprite_type <span class="kw1">FROM</span> users <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT18 SECTION "get_sprite(uid CHAR(255))" [9306-9667] -->
+<h3 class="sectionedit19" id="get_model_uid_char_255">get_model(uid CHAR(255))</h3>
+<div class="level3">
+
+<p>
+Get a user&#039;s model.
+</p>
+
+</div>
+
+<h4 id="input17">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output17">Output</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> Binary Blob</div>
+</li>
+<li class="level1"><div class="li"> Type</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="code17">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=18" title="Download Snippet" class="mediafile mf_sql">get_model.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> get_model$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> get_model <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">SELECT</span> model_blob<span class="sy0">,</span> model_type <span class="kw1">FROM</span> users <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT19 SECTION "get_model(uid CHAR(255))" [9668-10022] -->
+<h3 class="sectionedit20" id="set_avatar_uid_char_255_bdata_blob_type_int_unsigned">set_avatar(uid CHAR(255), bdata BLOB, type INT UNSIGNED)</h3>
+<div class="level3">
+
+<p>
+Set a user&#039;s avatar.
+</p>
+
+</div>
+
+<h4 id="input18">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+<li class="level1"><div class="li"> Binary Blob</div>
+</li>
+<li class="level1"><div class="li"> Type</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output18">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code18">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=19" title="Download Snippet" class="mediafile mf_sql">set_avatar.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_avatar$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_avatar <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> bdata <span class="kw1">BLOB</span><span class="sy0">,</span> <span class="kw1">TYPE</span> <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> avatar_blob <span class="sy0">=</span> bdata<span class="sy0">,</span> avatar_type <span class="sy0">=</span> <span class="kw1">TYPE</span> <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT20 SECTION "set_avatar(uid CHAR(255), bdata BLOB, type INT UNSIGNED)" [10023-10468] -->
+<h3 class="sectionedit21" id="set_sprite_uid_char_255_bdata_blob_type_int_unsigned">set_sprite(uid CHAR(255), bdata BLOB, type INT UNSIGNED)</h3>
+<div class="level3">
+
+<p>
+Set a user&#039;s sprite.
+</p>
+
+</div>
+
+<h4 id="input19">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+<li class="level1"><div class="li"> Binary Blob</div>
+</li>
+<li class="level1"><div class="li"> Type</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output19">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code19">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=20" title="Download Snippet" class="mediafile mf_sql">set_sprite.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_sprite$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_sprite <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> bdata <span class="kw1">BLOB</span><span class="sy0">,</span> <span class="kw1">TYPE</span> <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> sprite_blob <span class="sy0">=</span> bdata<span class="sy0">,</span> sprite_type <span class="sy0">=</span> <span class="kw1">TYPE</span> <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT21 SECTION "set_sprite(uid CHAR(255), bdata BLOB, type INT UNSIGNED)" [10469-10914] -->
+<h3 class="sectionedit22" id="set_model_uid_char_255_bdata_blob_type_int_unsigned">set_model(uid CHAR(255), bdata BLOB, type INT UNSIGNED)</h3>
+<div class="level3">
+
+<p>
+Set a user&#039;s model.
+</p>
+
+</div>
+
+<h4 id="input20">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+<li class="level1"><div class="li"> Binary Blob</div>
+</li>
+<li class="level1"><div class="li"> Type</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output20">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code20">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=21" title="Download Snippet" class="mediafile mf_sql">set_model.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_model$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_model <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> bdata <span class="kw1">BLOB</span><span class="sy0">,</span> <span class="kw1">TYPE</span> <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> model_blob <span class="sy0">=</span> bdata<span class="sy0">,</span> model_type <span class="sy0">=</span> <span class="kw1">TYPE</span> <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT22 SECTION "set_model(uid CHAR(255), bdata BLOB, type INT UNSIGNED)" [10915-11353] -->
+<h3 class="sectionedit23" id="rearrange_playlist_uid_char_255_playlist_number_int_unsigned_pl_from_int_unsigned_pl_to_int_unsigned">rearrange_playlist(uid CHAR(255), playlist_number INT UNSIGNED, pl_from INT UNSIGNED, pl_to INT UNSIGNED)</h3>
+<div class="level3">
+
+<p>
+Re-arrange a users playlist order.
+</p>
+
+</div>
+
+<h4 id="input21">Input</h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> WWUSERID</div>
+</li>
+<li class="level1"><div class="li"> playlist_number</div>
+</li>
+<li class="level1"><div class="li"> order_number from</div>
+</li>
+<li class="level1"><div class="li"> order_number to</div>
+</li>
+</ul>
+
+</div>
+
+<h4 id="output21">Output</h4>
+<div class="level4">
+
+<p>
+Nothing
+</p>
+
+</div>
+
+<h4 id="code21">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=22" title="Download Snippet" class="mediafile mf_sql">rearrange_playlist.sql</a></dt>
+<dd><pre class="code file sql">DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> rearrange_playlist$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> rearrange_playlist<span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="sy0">,</span> playlist_number <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="sy0">,</span> pl_from <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="sy0">,</span> pl_to <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> avatar_blob <span class="sy0">=</span> bdata<span class="sy0">,</span> avatar_type <span class="sy0">=</span> <span class="kw1">TYPE</span> <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT23 SECTION "rearrange_playlist(uid CHAR(255), playlist_number INT UNSIGNED, pl_from INT UNSIGNED, pl_to INT UNSIGNED)" [11354-11963] -->
+<h3 class="sectionedit24" id="template">template</h3>
+<div class="level3">
+
+</div>
+
+<h4 id="input22">Input</h4>
+<div class="level4">
+
+</div>
+
+<h4 id="output22">Output</h4>
+<div class="level4">
+
+</div>
+
+<h4 id="code22">Code</h4>
+<div class="level4">
+<dl class="file">
+<dt><a href="/doku.php?do=export_code&amp;id=defined_functions&amp;codeblock=23" title="Download Snippet" class="mediafile mf_sql">template.sql</a></dt>
+<dd><pre class="code file sql">&nbsp;</pre>
+</dd></dl>
+
+</div>
+<!-- EDIT24 SECTION "template" [11964-12052] -->
+<h2 class="sectionedit25" id="php_api_functions">PHP API Functions</h2>
+<div class="level2">
+
+</div>
+<!-- EDIT25 SECTION "PHP API Functions" [12053-12080] -->
+<h2 class="sectionedit26" id="http_public_functions">HTTP Public Functions</h2>
+<div class="level2">
+
+</div>
+<!-- EDIT26 SECTION "HTTP Public Functions" [12081-] -->

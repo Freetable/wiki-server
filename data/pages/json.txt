@@ -1,0 +1,9 @@
+=====About=====
+JSON (/ˈdʒeɪsɒn/ jah-soun, /ˈdʒeɪsən/ ja-son), or JavaScript Object Notation, is an open standard format that uses human-readable text to transmit data objects consisting of attribute–value pairs. It is used primarily to transmit data between a server and web application, as an alternative to XML.
+=====Where we use it=====
+All inter application communication is in JSON format encapsulated in base 32 encoding.
+=====Why we use it=====
+JSON is very simple to read, debug, and decode.  Every major language has a built in JSON decoder and if the language of choosing does not it's very easy to parse using string manipulation commands.
+=====External Links=====
+[[http://en.wikipedia.org/wiki/JSON]]
+=====Notes=====

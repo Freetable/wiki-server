@@ -1,0 +1,8 @@
+DELIMITER $$
+&nbsp;
+DROP PROCEDURE IF EXISTS prepend_song_to_playlist$$
+CREATE PROCEDURE prepend_song_to_playlist(uid CHAR(128), sid CHAR(128), playlist INT UNSIGNED)
+BEGIN
+&nbsp;
+END;
+DELIMITER $$

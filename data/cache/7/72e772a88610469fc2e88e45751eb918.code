@@ -1,0 +1,18 @@
+DELIMITER $$
+&nbsp;
+DROP PROCEDURE IF EXISTS prepend_song_to_playlist$$
+CREATE PROCEDURE prepend_song_to_playlist(uid CHAR(128), fid CHAR(128), playlist INT UNSIGNED, fnid INT UNSIGNED)
+BEGIN
+ IF ((SELECT COUNT(WWFILEID) FROM playlists WHERE WWUSERID = uid AND WWFILEID = fid AND playlist_number = playlist) = 0) THEN
+      BEGIN
+      UPDATE playlists SET order_number=(order_number+2)*10 WHERE WWUSERID = uid AND playlist_number = playlist;
+      INSERT playlists SET order_number=1, WWUSERID = uid, playlist_number = playlist, WWFILEID = fid, file_network = fnid;
+      UPDATE playlists SET order_number=COUNT(*)+1 WHERE WWUSERID = uid AND WWFILEID = fid AND playlist_number = playlist ORDER BY order_number ASC;
+      SELECT &quot;1&quot;;
+      END;
+    ELSE
+      SELECT &quot;-1&quot;;
+    END IF;
+END$$
+&nbsp;
+DELIMITER ;

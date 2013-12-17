@@ -1,0 +1,10 @@
+=====About=====
+JavaScript (JS) is an interpreted computer programming language.  As part of web browsers, implementations allow client-side scripts to interact with the user, control the browser, communicate asynchronously, and alter the document content that is displayed.
+=====Where we use it=====
+Freetables chat GUI relies on Javascript for almost every client side interaction.
+=====Why we use it=====
+It's open source and the dominant standard in modern browsers.
+=====External Links=====
+[[http://en.wikipedia.org/wiki/JavaScript]]
+
+=====Notes=====

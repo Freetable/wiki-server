@@ -1,0 +1,13 @@
+=====About=====
+A dynamic, open source programming language with a focus on simplicity and productivity. It has an elegant syntax that is natural to read and easy to write.
+
+=====Where we use it=====
+Our Chat and File server are both wrote in Ruby.
+
+=====Why we use it=====
+Writing event based code like what is required to maintain a high responsiveness from our chat server needs to be as simple as possible and todays tools make that very easy for us
+
+=====External Links=====
+[[https://www.ruby-lang.org/en/]]
+
+=====Notes=====

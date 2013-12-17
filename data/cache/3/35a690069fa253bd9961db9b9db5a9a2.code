@@ -1,0 +1,16 @@
+DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> set_user_nickname$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> set_user_nickname <span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span><span class="sy0">,</span> nnickname <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">32</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+    <span class="kw1">IF</span> <span class="br0">&#40;</span><span class="br0">&#40;</span><span class="kw1">SELECT</span> <span class="kw1">COUNT</span><span class="br0">&#40;</span>nickname<span class="br0">&#41;</span> <span class="kw1">FROM</span> users <span class="kw1">WHERE</span> nickname <span class="sy0">=</span> nnickname<span class="br0">&#41;</span> <span class="sy0">=</span> <span class="nu0">0</span><span class="br0">&#41;</span> <span class="kw1">THEN</span>
+      <span class="kw1">BEGIN</span>
+      <span class="kw1">UPDATE</span> users <span class="kw1">SET</span> nickname <span class="sy0">=</span> nnickname <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid;
+      <span class="kw1">SELECT</span> <span class="st0">&quot;1&quot;</span>;
+      <span class="kw1">END</span>;
+    <span class="kw1">ELSE</span>
+      <span class="kw1">SELECT</span> <span class="st0">&quot;-1&quot;</span>;
+    <span class="kw1">END</span> <span class="kw1">IF</span>;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;

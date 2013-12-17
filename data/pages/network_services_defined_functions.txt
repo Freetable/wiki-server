@@ -1,0 +1,893 @@
+This is a list of every function that needs to be implemented by layer
+=====SQL Stored Functions=====
+====create_random_hash(bits INT UNSIGNED)====
+create_random_hash is used to generate unique identifiers
+
+===Input===
+==bits INT UNSIGNED==
+  * bits -- bit is used to define how long the random string needs to be.
+
+===Output===
+Output is the newly generated hash.
+
+===Code===
+<file sql create_random_hash.sql>
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS create_random_hash$$
+CREATE FUNCTION create_random_hash (bits INT UNSIGNED)
+
+RETURNS TEXT
+DETERMINISTIC
+
+  BEGIN
+  
+  DECLARE output TEXT DEFAULT '';
+  
+  IF bits > 7 THEN BEGIN
+     
+	DECLARE counter INT UNSIGNED;
+	DECLARE newcharacter CHAR(1);
+    
+	SET counter = 0;
+    
+	WHILE counter < bits DO
+
+	  SET newcharacter = (SELECT ELT(1 + FLOOR(RAND() * 63), 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','u','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9' ));
+	  SET output = CONCAT(output,newcharacter);
+	  SET counter = counter + 1;
+	  
+	END WHILE;
+      END;
+  ELSE
+      BEGIN
+	SET output = '-1';
+      END;
+  END IF;
+  
+  RETURN output;
+  
+  END$$
+  
+DELIMITER ;
+</file>
+
+====create_wwuserid()====
+This safely creates a new unique user in the system.  Must wrap in a write lock.
+
+<code sql>
+LOCK TABLES users WRITE;
+SELECT create_wwuserid();
+UNLOCK TABLES;
+</code>
+
+===Input===
+  * Nothing
+
+===Output===
+Returns valid new WWUSERID.
+
+===Code===
+<file sql create_wwuserid.sql>
+-- MUST WRITE LOCK USERS BEFORE ISSUING THIS COMMAND!
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS create_wwuserid$$
+CREATE FUNCTION create_wwuserid ()
+
+RETURNS VARCHAR(128)
+DETERMINISTIC
+
+  BEGIN
+  
+  DECLARE output VARCHAR(128);
+  DECLARE done_bool BOOL;
+  DECLARE count_test INT UNSIGNED;
+    
+  SET @username = (SELECT create_random_hash(32));
+  SET output = '-1';
+  SET done_bool = FALSE;
+  
+  WHILE done_bool = FALSE DO
+    SET done_bool = TRUE;
+    SET @hash = (SELECT create_random_hash(128));
+    IF (SELECT count((SELECT WWUSERID FROM users WHERE WWUSERID = @hash))) = 0 THEN 
+      BEGIN
+      -- Try to create it
+	INSERT INTO users SET WWUSERID = @hash, nickname = @username;
+      END;
+    ELSE
+      BEGIN
+      -- Back around the loop
+      SET done_bool = FALSE;
+      END;
+    END IF;
+      
+  END WHILE;
+  
+  RETURN @hash;
+  END$$
+  
+DELIMITER ;
+</file>
+
+====set_user_nickname(uid CHAR(128), nickname VARCHAR(32))====
+Change a users nickname.
+
+===Example===
+<code>
+call set_user_nickname('0ZeLcsOBaC4bdCuqEXpM7PU3esLsGSNIF8qY8ufan3lSuhkTzMhDpHo0VKxeBuY0DwsPFsTZDFP9PNUAEUaGRFmu5XFSPV5qjyWVnFmu5XGawnxJWTdYjplCWpQUzMe1','ValidUser');
+</code>
+
+===Input===
+  * WWUSERID
+  * new nickname
+
+===Output===
+Nothing
+
+===Code===
+<file sql set_user_nickname.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS set_user_nickname$$
+CREATE PROCEDURE set_user_nickname (uid CHAR(128), nnickname VARCHAR(32))
+  BEGIN
+    IF ((SELECT COUNT(nickname) FROM users where nickname = nnickname) = 0) THEN
+      BEGIN
+      UPDATE users SET nickname = nnickname WHERE WWUSERID = uid;
+      SELECT "1";
+      END;
+    ELSE
+      SELECT "-1";
+    END IF;
+  END$$
+  
+DELIMITER ;
+</file>
+====set_password (uid CHAR(128), pass VARCHAR(128))====
+Use this to set a users password.
+
+===Example===
+<code>
+call set_password('YFSNLQuAw5PeoxFB2RxJUMAdQ7AHnswsPFsTZFNziLS2jMPqnGmu6eiU81cnwBusXqPMRxJYcGKgDvp82g5EmyOs5cdBrbD7oUtuOGwmu3MUDTVyDx0yjU84lOZUY7oT','ValidPassword');
+</code>
+
+===Input===
+  * uid CHAR(128) uid of user
+  * pass VARCHAR(128) password of user
+
+===Output===
+Nothing
+
+===Code===
+<file sql set_password.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS set_password$$
+
+CREATE PROCEDURE set_password (uid CHAR(128), pass VARCHAR(128))
+
+BEGIN
+  UPDATE users SET password = SHA2(pass,512) WHERE WWUSERID = uid;
+END$$
+
+DELIMITER ;
+</file>
+====validate_user(username VARCHAR(32), pass VARCHAR(128))====
+Verify that a user gave us the valid password.
+
+===Example===
+<code>
+select validate_user('ValidUser', 'ValidPassword');
+</code>
+
+===Input===
+  * username VARCHAR(32) nickname of user
+  * pass VARCHAR(128) password of user
+
+===Output===
+Return WWUSERID or -1 if failed
+
+===Code===
+<file sql validate_user.sql>
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS validate_user$$
+
+CREATE FUNCTION validate_user (nnickname VARCHAR(32), pass VARCHAR(128))
+
+RETURNS VARCHAR(128)
+DETERMINISTIC
+
+BEGIN
+  DECLARE p_hash VARCHAR(128);
+  DECLARE t_hash VARCHAR(128);
+    
+  SET p_hash = (SELECT password FROM users WHERE nickname = nnickname);
+  SET t_hash = SHA2(pass,512);
+  
+  IF STRCMP(p_hash,t_hash) = 0 THEN 
+    RETURN uid;
+  ELSE
+   RETURN '-1';
+  END IF;
+  
+END$$
+
+DELIMITER ;
+</file>
+====query_user(uid CHAR(128))====
+Get the basic information of a user.
+
+=== Example ===
+<code>
+call query_user((select validate_user('ValidUser', 'ValidPassword')));
+</code>
+
+===Input===
+  * Users UID
+
+===Output===
+  * email
+  * nickname
+  * first name
+  * last name
+  * short description
+  * long description
+
+===Code===
+<file sql query_user.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS query_user$$
+CREATE PROCEDURE query_user (uid CHAR(128))
+  BEGIN
+    SELECT email, nickname, first_name, last_name, short_description, long_description FROM users WHERE WWUSERID = uid;
+  END$$
+  
+DELIMITER ;
+</file>
+====set_user_email(uid CHAR(128), eemail VARCHAR(96))====
+Change a users email.
+
+===Example===
+<code>
+call set_user_email((select validate_user('ValidUser', 'ValidPassword')), 'someone@gmail.com');
+</code>
+
+===Input===
+  * WWUSERID  -- World wide userid
+  * email -- New email address
+ 
+===Output===
+Nothing
+
+===Code===
+<file sql set_user_email.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS set_user_email$$
+CREATE PROCEDURE set_user_email (uid CHAR(128), eemail VARCHAR(96))
+  BEGIN
+    UPDATE users SET email = eemail WHERE WWUSERID = uid; 
+  END$$
+  
+DELIMITER ;
+</file>
+====set_user_first_name(uid CHAR(128), ffirst_name VARCHAR(32))====
+Change a user's first name.
+
+===Example===
+<code>
+call set_user_first_name((select validate_user('ValidUser', 'ValidPass')), 'ValidFirstName');
+</code>
+
+===Input===
+  * WWUSERID
+  * New First name
+
+===Output===
+Nothing
+
+===Code===
+<file sql set_user_first_name.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS set_user_first_name$$
+CREATE PROCEDURE set_user_first_name (uid CHAR(128), ffirst_name VARCHAR(32))
+  BEGIN
+    UPDATE users SET first_name = ffirst_name WHERE WWUSERID = uid; 
+  END$$
+  
+DELIMITER ;
+</file>
+
+====set_user_last_name(uid CHAR(128), last_name VARCHAR(32))====
+Change a user's last name.
+
+===Example===
+<code>
+call set_user_last_name((select validate_user('ValidUser', 'ValidPass')), 'ValidLastName');
+</code>
+
+===Input===
+  * WWUSERID
+  * New Last name
+
+===Output===
+Nothing
+
+===Code===
+<file sql set_user_last_name.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS set_user_last_name$$
+CREATE PROCEDURE set_user_last_name (uid CHAR(128), llast_name VARCHAR(32))
+  BEGIN
+    UPDATE users SET last_name = llast_name WHERE WWUSERID = uid; 
+  END$$
+  
+DELIMITER ;
+</file>
+====set_user_short_descr(uid CHAR(128), short_description VARCHAR(1024))====
+Change a user's short description.
+
+===Example===
+<code>
+call set_user_short_descr((select validate_user('ValidUser', 'ValidPass')), 'Hi Der');
+</code>
+
+===Input===
+  * WWUSERID
+  * short description
+
+===Output===
+Nothing
+
+===Code===
+<file sql set_user_short_descr.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS set_user_short_descr$$
+CREATE PROCEDURE set_user_short_descr (uid CHAR(128), sshort_descr VARCHAR(1024))
+  BEGIN
+    UPDATE users SET short_description = sshort_descr WHERE WWUSERID = uid; 
+  END$$
+  
+DELIMITER ;
+</file>
+====set_user_long_descr(uid CHAR(128), llong_description TEXT)====
+Change a user's long description.
+
+===Example===
+<code>
+call set_user_long_descr((select validate_user('ValidUser', 'ValidPass')), 'Hi Der');
+</code>
+
+===Input===
+  * WWUSERID
+  * New long description
+
+===Output===
+Nothing
+
+===Code===
+<file sql set_user_long_descr.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS set_user_long_descr$$
+CREATE PROCEDURE set_user_long_descr (uid CHAR(128), llong_description TEXT)
+  BEGIN
+    UPDATE users SET long_description = llong_description WHERE WWUSERID = uid; 
+  END$$
+  
+DELIMITER ;
+</file>
+====delete_user(uid CHAR(128))====
+Delete a user from the system
+===Example===
+<code>
+call delete_user((select validate_user('ValidUser', 'ValidPass')));
+</code>
+
+===Input===
+  * WWUSERID
+
+===Output===
+Nothing
+
+===Code===
+<file sql delete_user.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS delete_user$$
+CREATE PROCEDURE delete_user (uid CHAR(128))
+  BEGIN
+    DELETE FROM users WHERE WWUSERID = uid; 
+  END$$
+  
+DELIMITER ;
+</file>
+====get_avatar(uid CHAR(128))====
+Get a user's avatar.
+
+===Input===
+  * WWUSERID
+
+===Output===
+  * Binary Blob 
+  * Type
+
+===Code===
+<file sql get_avatar.sql>
+DELIMITER $$
+ 
+DROP PROCEDURE IF EXISTS get_avatar$$
+CREATE PROCEDURE get_avatar (uid CHAR(128))
+  BEGIN
+    SELECT avatar_blob, avatar_type FROM users WHERE WWUSERID = uid;
+  END$$
+ 
+DELIMITER ;
+</file>
+====get_sprite(uid CHAR(128))====
+Get a user's sprite.
+
+===Input===
+  * WWUSERID
+
+===Output===
+  * Binary Blob
+  * Type
+
+===Code===
+<file sql get_sprite.sql>
+DELIMITER $$
+ 
+DROP PROCEDURE IF EXISTS get_sprite$$
+CREATE PROCEDURE get_sprite (uid CHAR(128))
+  BEGIN
+    SELECT sprite_blob, sprite_type FROM users WHERE WWUSERID = uid;
+  END$$
+ 
+DELIMITER ;
+</file>
+====get_model(uid CHAR(128))====
+Get a user's model.
+
+===Input===
+  * WWUSERID
+
+===Output===
+  * Binary Blob
+  * Type
+
+===Code===
+<file sql get_model.sql>
+DELIMITER $$
+ 
+DROP PROCEDURE IF EXISTS get_model$$
+CREATE PROCEDURE get_model (uid CHAR(128))
+  BEGIN
+    SELECT model_blob, model_type FROM users WHERE WWUSERID = uid;
+  END$$
+ 
+DELIMITER ;
+</file>
+
+====set_avatar(uid CHAR(128), bdata BLOB, type INT UNSIGNED)====
+Set a user's avatar.
+
+===Input===
+  * WWUSERID
+  * Binary Blob
+  * Type
+
+===Output===
+Nothing
+
+===Code===
+<file sql set_avatar.sql>
+DELIMITER $$
+ 
+DROP PROCEDURE IF EXISTS set_avatar$$
+CREATE PROCEDURE set_avatar (uid CHAR(128), bdata BLOB, type INT UNSIGNED)
+  BEGIN
+    UPDATE users SET avatar_blob = bdata, avatar_type = type WHERE WWUSERID = uid;
+  END$$
+ 
+DELIMITER ;
+</file>
+====set_sprite(uid CHAR(128), bdata BLOB, type INT UNSIGNED)====
+Set a user's sprite.
+
+===Input===
+  * WWUSERID
+  * Binary Blob
+  * Type
+
+===Output===
+Nothing
+
+===Code===
+<file sql set_sprite.sql>
+DELIMITER $$
+ 
+DROP PROCEDURE IF EXISTS set_sprite$$
+CREATE PROCEDURE set_sprite (uid CHAR(128), bdata BLOB, type INT UNSIGNED)
+  BEGIN
+    UPDATE users SET sprite_blob = bdata, sprite_type = type WHERE WWUSERID = uid;
+  END$$
+ 
+DELIMITER ;
+</file>
+====set_model(uid CHAR(128), bdata BLOB, type INT UNSIGNED)====
+Set a user's model.
+
+===Input===
+  * WWUSERID
+  * Binary Blob
+  * Type
+
+===Output===
+Nothing
+
+===Code===
+<file sql set_model.sql>
+DELIMITER $$
+ 
+DROP PROCEDURE IF EXISTS set_model$$
+CREATE PROCEDURE set_model (uid CHAR(128), bdata BLOB, type INT UNSIGNED)
+  BEGIN
+    UPDATE users SET model_blob = bdata, model_type = type WHERE WWUSERID = uid;
+  END$$
+ 
+DELIMITER ;
+</file>
+
+====create_wwfileid()====
+This safely creates a new unique file in the system.  Must wrap call in a write lock.
+
+<code sql>
+LOCK TABLES files WRITE;
+SELECT create_wwfileid();
+UNLOCK TABLES;
+</code>
+
+===Input===
+  * Nothing
+
+===Output===
+Returns valid new WWFILEID.
+
+===Code===
+<file sql create_wwfileid.sql>
+-- MUST WRITE LOCK USERS BEFORE ISSUING THIS COMMAND!
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS create_wwfileid$$
+CREATE FUNCTION create_wwfileid ()
+
+RETURNS VARCHAR(128)
+DETERMINISTIC
+
+  BEGIN
+  
+  DECLARE output VARCHAR(128);
+  DECLARE done_bool BOOL;
+  DECLARE count_test INT UNSIGNED;
+    
+  SET @username = (SELECT create_random_hash(32));
+  SET output = '-1';
+  SET done_bool = FALSE;
+  
+  WHILE done_bool = FALSE DO
+    SET done_bool = TRUE;
+    SET @hash = (SELECT create_random_hash(128));
+    IF (SELECT count((SELECT WWFILEID FROM files WHERE WWFILEID = @hash))) = 0 THEN 
+      BEGIN
+      -- Try to create it
+  INSERT INTO files SET WWFILEID = @hash;
+      END;
+    ELSE
+      BEGIN
+      -- Back around the loop
+      SET done_bool = FALSE;
+      END;
+    END IF;
+      
+  END WHILE;
+  
+  RETURN @hash;
+  END$$
+  
+DELIMITER ;
+</file>
+
+====add_file_network(nnetwork_name VARCHAR(384), nnetwork_info_url VARCHAR(384), ccontact_name VARCHAR(384), ccontact_email VARCHAR(384), ccontact_url VARCHAR(384))====
+Create a network
+
+====prepend_song_to_playlist(uid CHAR(128), sid CHAR(128), playlist INT UNSIGNED, fnid INT UNSIGNED)====
+Prepend a WWFILEID to playlist number for WWUSERID.
+
+===Input===
+  * WWUSERID
+  * WWFILEID
+  * playlist
+
+===Output===
+  * 1 if good
+  * -1 if already exists
+
+===Code===
+<file sql prepend_file_to_playlist.sql>
+DELIMITER $$
+ 
+DROP PROCEDURE IF EXISTS prepend_song_to_playlist$$
+CREATE PROCEDURE prepend_song_to_playlist(uid CHAR(128), fid CHAR(128), playlist INT UNSIGNED, fnid INT UNSIGNED)
+BEGIN
+ IF ((SELECT COUNT(WWFILEID) FROM playlists WHERE WWUSERID = uid AND WWFILEID = fid AND playlist_number = playlist) = 0) THEN
+      BEGIN
+        CREATE TEMPORARY TABLE my_playlist LIKE playlists;
+        
+        INSERT INTO my_playlist(WWFILEID, WWUSERID, playlist_number, order_number, file_network) select WWFILEID, WWUSERID, playlist_number, order_number, file_network from playlists WHERE WWUSERID=uid AND playlist_number = playlist;
+ 		
+ 		UPDATE my_playlist SET order_number = (order_number*10)+1;
+
+ 		INSERT INTO my_playlist(WWFILEID, WWUSERID, playlist_number, order_number, file_network) VALUES( fid, uid, playlist, '0', fnid );
+
+        ALTER TABLE my_playlist ADD new_order_number INT UNSIGNED;
+ 
+        SET @counter = 1;
+ 
+        UPDATE my_playlist SET new_order_number = @counter := @counter + 1 ORDER BY order_number;
+
+        ALTER TABLE my_playlist DROP order_number;
+        
+        ALTER TABLE my_playlist CHANGE new_order_number order_number INT UNSIGNED;
+ 
+        DELETE FROM playlists WHERE WWUSERID=uid AND playlist_number = playlist;
+ 
+        INSERT INTO playlists(WWFILEID, WWUSERID, playlist_number, order_number, file_network) select WWFILEID, WWUSERID, playlist_number, order_number, file_network from my_playlist;
+        
+        DROP TABLE my_playlist;
+      
+      SELECT "1";
+      END;
+    ELSE
+      SELECT "-1";
+    END IF;
+END$$
+ 
+DELIMITER ;
+
+</file>
+====get_current_file(uid CHAR(128))====
+Get a users top song from their active playlist
+
+===Input===
+  * WWUSERID
+
+===Output===
+  * WWSONGID
+
+===Code===
+<file sql get_current_file.sql>
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS get_current_file$$
+CREATE FUNCTION get_current_file (uid CHAR(128))
+
+RETURNS CHAR(128)
+DETERMINISTIC
+
+  BEGIN
+  
+    RETURN (SELECT WWSONGID FROM playlists WHERE WWUSERID = uid AND playlist_number = ( SELECT playlist_number FROM users_current_playlist WHERE WWUSERID = uid ) AND order_number = 0);
+
+  END$$
+  
+DELIMITER ;
+</file>
+
+====set_current_playlist(uid CHAR(128)), pplaylist_number INT UNSIGNED)====
+Set a users current playlist.
+
+===Input===
+  * WWUSERID
+  * new playlist number
+===Output===
+Nothing
+
+===Code===
+<file sql set_current_playlist.sql>
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS set_current_playlist$$
+DROP PROCEDURE IF EXISTS set_current_playlist$$
+CREATE PROCEDURE set_current_playlist (uid CHAR(128), pplaylist_number INT UNSIGNED)
+  BEGIN
+  
+    UPDATE users_current_playlist SET playlist_number = pplaylist_number WHERE WWUSERID = uid;
+
+  END$$
+  
+DELIMITER ;
+</file>
+
+====get_playlist(uid CHAR(128), pplaylist_number INT UNSIGNED)====
+Get a users current playlist.
+
+===Input===
+  * WWUSERID
+  * new playlist number
+
+===Output===
+Songs in current playlist
+
+===Code===
+<file sql get_playlist.sql>
+DELIMITER $$
+ 
+DROP PROCEDURE IF EXISTS get_playlist$$
+CREATE PROCEDURE get_playlist (uid CHAR(128), pplaylist_number INT UNSIGNED)
+  BEGIN
+ 
+    SELECT WWSONGID FROM playlists WHERE WWUSERID = uid AND playlist_number = ( SELECT playlist_number FROM users_current_playlist WHERE WWUSERID = uid );
+ 
+  END$$
+ 
+DELIMITER ;
+</file>
+
+====get_file_info(fid CHAR(128))====
+Get the Metadata for a file.
+
+===Input===
+  * WWFILEID
+
+===Output===
+  * File row
+
+===Code===
+<file sql get_file_info.sql>
+DELIMITER $$
+ 
+DROP PROCEDURE IF EXISTS get_file_info$$
+CREATE PROCEDURE get_file_info (fid CHAR(128))
+  BEGIN
+    SELECT title, artist, album, year, url, md5, sha1, sha512 FROM files WHERE WWFILEID = fid;
+  END$$
+ 
+DELIMITER ;
+</file>
+
+
+====set_file_info (fid CHAR(128), ttitle VARCHAR(256), aartist VARCHAR(256), aalbum VARCHAR(256), yyear DATE, uurl VARCHAR(384), mmd5 CHAR(32), ssha1 CHAR(160), ssha512 CHAR(128))====
+Set the Metadata for a file.
+
+===Input===
+  * WWFILEID
+  * title
+  * artist
+  * album
+  * year
+  * url
+  * md5
+  * sha1
+  * sha512
+
+===Output===
+Nothing
+
+===Code===
+<file sql set_file_info.sql>
+DELIMITER $$
+ 
+DROP PROCEDURE IF EXISTS set_file_info$$
+CREATE PROCEDURE set_file_info (fid CHAR(128), ttitle VARCHAR(256), aartist VARCHAR(256), aalbum VARCHAR(256), yyear DATE, uurl VARCHAR(384), mmd5 CHAR(32), ssha1 CHAR(160), ssha512 CHAR(128))
+  BEGIN
+    UPDATE files SET title = ttitle, artist = aartist, album = aalbum, year = yyear, url = uurl, md5 = mmd5, sha1 = ssha1, sha512 = ssha512 WHERE WWFILEID = fid;
+  END$$
+ 
+DELIMITER ;
+</file>
+
+====get_file_server_list(fid CHAR(128))====
+Change a user's first name.
+
+===Input===
+  * WWFILEID
+
+===Output===
+  * List of Server urls with the file in question
+
+===Code===
+<file sql get_file_server_list.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS get_file_server_list$$
+CREATE PROCEDURE get_file_server_list(fid CHAR(128))
+  BEGIN
+    SELECT url from file_to_servers where WWFILEID = fid;
+  END$$
+  
+DELIMITER ;
+</file>
+
+====add_server_to_file_list(fid CHAR(128), uurl VARCHAR(384))====
+Add a file server's url to the a WWFILEID's server list
+
+===Input===
+  * WWFILEID
+  * url
+
+===Output===
+Nothing
+
+===Code===
+<file sql add_server_to_file_list.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS add_server_to_file_list$$
+CREATE PROCEDURE add_server_to_file_list(fid CHAR(128), uurl VARCHAR(384))
+  BEGIN
+
+    INSERT into file_to_servers SET WWFIELDID = fid, url = uurl, last_verified = NOW();
+
+  END$$
+  
+DELIMITER ;
+</file>
+====delete_server_from_file_list(fid CHAR(128), uurl VARCHAR(384))====
+Remove a bunk url from a files available server list
+
+===Input===
+  * WWFILEID
+  * url
+
+===Output===
+Nothing
+
+===Code===
+<file sql delete_server_from_file_list.sql>
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS delete_server_from_file_list$$
+CREATE PROCEDURE delete_server_from_file_list(fid CHAR(128), uurl VARCHAR(384))
+  BEGIN
+    DELETE FROM file_to_servers WHERE WWFIELDID = fid AND url = uurl;
+  END$$
+  
+DELIMITER ;
+</file>
+====rearrange_playlist(uid CHAR(128), playlist_number INT UNSIGNED, pl_from INT UNSIGNED, pl_to INT UNSIGNED)====
+Re-arrange a users playlist order.
+
+===Input===
+  * WWUSERID
+  * playlist_number
+  * order_number from
+  * order_number to
+
+===Output===
+Nothing
+
+===Code===
+<file sql rearrange_playlist.sql>
+DELIMITER $$
+ 
+DROP PROCEDURE IF EXISTS rearrange_playlist$$
+CREATE PROCEDURE rearrange_playlist(uid CHAR(128), playlist_number INT UNSIGNED, pl_from INT UNSIGNED, pl_to INT UNSIGNED)
+  BEGIN
+
+  END$$
+ 
+DELIMITER ;
+</file>
+
+=====PHP API Functions=====
+=====HTTP Public Functions=====

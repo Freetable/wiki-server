@@ -1,0 +1,38 @@
+Welcome to the Freetable Documentation Project.  Everything required to recreate Freetable lies within these pages.  Feel free to create an account and contribute.  If you see something that should change structurally, please head over to our forum and create a topic under wiki changes.  If you have an addon that you would like to contribute documentation to, please do it under Addons.
+
+======About======
+    * [[Freetable Manifesto]]
+    * [[Frequently Asked Questions]] 
+======Software Stack======
+
+The Freetable software stack has many interacting layers.  Please refer to the following visual diagram to help better understand how the different layers inter connect.  You can always click on the picture and open it in a new tab to save it for later reference. 
+
+{{:layers.png?400|}}
+
+Below you will find the different layers defined to various degrees.  Please come find us on IRC if you have any questions or think that we are missing something.
+
+=====Backends=====
+    * [[Percona]]
+    * [[MongoDB & GridFS]]
+    * [[Redis]]
+=====Languages=====
+    * [[PHP]]
+    * [[Ruby]]
+    * [[Javascript]]
+=====Applications=====
+    * [[Varnish]]
+    * [[Nginx]]
+    * [[Rubinius]]
+=====Technologies=====
+    * [[Websockets]]
+    * [[JSON]]
+    * [[jQuery]]
+    * [[GridFS]]
+    * [[Celluloid]]
+======Servers======
+    * [[Network Server]]
+    * [[File Server]]
+    * [[Chat Server]]
+    * [[Caching Server]]
+======Addons======
+    * [[Example]]

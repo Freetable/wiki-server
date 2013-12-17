@@ -1,0 +1,38 @@
+DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">FUNCTION</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> create_random_hash$$
+<span class="kw1">CREATE</span> <span class="kw1">FUNCTION</span> create_random_hash <span class="br0">&#40;</span>bits <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="br0">&#41;</span>
+&nbsp;
+<span class="kw1">RETURNS</span> TEXT
+DETERMINISTIC
+&nbsp;
+  <span class="kw1">BEGIN</span>
+&nbsp;
+  <span class="kw1">DECLARE</span> output TEXT <span class="kw1">DEFAULT</span> <span class="st0">''</span>;
+&nbsp;
+  <span class="kw1">IF</span> bits <span class="sy0">&gt;</span> <span class="nu0">7</span> <span class="kw1">THEN</span> <span class="kw1">BEGIN</span>
+&nbsp;
+	<span class="kw1">DECLARE</span> counter <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span>;
+	<span class="kw1">DECLARE</span> newcharacter <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">1</span><span class="br0">&#41;</span>;
+&nbsp;
+	<span class="kw1">SET</span> counter <span class="sy0">=</span> <span class="nu0">0</span>;
+&nbsp;
+	WHILE counter <span class="sy0">&lt;</span> bits DO
+&nbsp;
+	  <span class="kw1">SET</span> newcharacter <span class="sy0">=</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> ELT<span class="br0">&#40;</span><span class="nu0">1</span> <span class="sy0">+</span> <span class="kw1">FLOOR</span><span class="br0">&#40;</span>RAND<span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="sy0">*</span> <span class="nu0">63</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="st0">'A'</span><span class="sy0">,</span><span class="st0">'B'</span><span class="sy0">,</span><span class="st0">'C'</span><span class="sy0">,</span><span class="st0">'D'</span><span class="sy0">,</span><span class="st0">'E'</span><span class="sy0">,</span><span class="st0">'F'</span><span class="sy0">,</span><span class="st0">'G'</span><span class="sy0">,</span><span class="st0">'H'</span><span class="sy0">,</span><span class="st0">'I'</span><span class="sy0">,</span><span class="st0">'J'</span><span class="sy0">,</span><span class="st0">'K'</span><span class="sy0">,</span><span class="st0">'L'</span><span class="sy0">,</span><span class="st0">'M'</span><span class="sy0">,</span><span class="st0">'N'</span><span class="sy0">,</span><span class="st0">'O'</span><span class="sy0">,</span><span class="st0">'P'</span><span class="sy0">,</span><span class="st0">'Q'</span><span class="sy0">,</span><span class="st0">'R'</span><span class="sy0">,</span><span class="st0">'S'</span><span class="sy0">,</span><span class="st0">'T'</span><span class="sy0">,</span><span class="st0">'U'</span><span class="sy0">,</span><span class="st0">'V'</span><span class="sy0">,</span><span class="st0">'W'</span><span class="sy0">,</span><span class="st0">'X'</span><span class="sy0">,</span><span class="st0">'Y'</span><span class="sy0">,</span><span class="st0">'Z'</span><span class="sy0">,</span><span class="st0">'a'</span><span class="sy0">,</span><span class="st0">'b'</span><span class="sy0">,</span><span class="st0">'c'</span><span class="sy0">,</span><span class="st0">'d'</span><span class="sy0">,</span><span class="st0">'e'</span><span class="sy0">,</span><span class="st0">'f'</span><span class="sy0">,</span><span class="st0">'g'</span><span class="sy0">,</span><span class="st0">'h'</span><span class="sy0">,</span><span class="st0">'i'</span><span class="sy0">,</span><span class="st0">'j'</span><span class="sy0">,</span><span class="st0">'k'</span><span class="sy0">,</span><span class="st0">'l'</span><span class="sy0">,</span><span class="st0">'m'</span><span class="sy0">,</span><span class="st0">'n'</span><span class="sy0">,</span><span class="st0">'o'</span><span class="sy0">,</span><span class="st0">'p'</span><span class="sy0">,</span><span class="st0">'q'</span><span class="sy0">,</span><span class="st0">'u'</span><span class="sy0">,</span><span class="st0">'r'</span><span class="sy0">,</span><span class="st0">'s'</span><span class="sy0">,</span><span class="st0">'t'</span><span class="sy0">,</span><span class="st0">'u'</span><span class="sy0">,</span><span class="st0">'v'</span><span class="sy0">,</span><span class="st0">'w'</span><span class="sy0">,</span><span class="st0">'x'</span><span class="sy0">,</span><span class="st0">'y'</span><span class="sy0">,</span><span class="st0">'z'</span><span class="sy0">,</span><span class="st0">'0'</span><span class="sy0">,</span><span class="st0">'1'</span><span class="sy0">,</span><span class="st0">'2'</span><span class="sy0">,</span><span class="st0">'3'</span><span class="sy0">,</span><span class="st0">'4'</span><span class="sy0">,</span><span class="st0">'5'</span><span class="sy0">,</span><span class="st0">'6'</span><span class="sy0">,</span><span class="st0">'7'</span><span class="sy0">,</span><span class="st0">'8'</span><span class="sy0">,</span><span class="st0">'9'</span> <span class="br0">&#41;</span><span class="br0">&#41;</span>;
+	  <span class="kw1">SET</span> output <span class="sy0">=</span> CONCAT<span class="br0">&#40;</span>output<span class="sy0">,</span>newcharacter<span class="br0">&#41;</span>;
+	  <span class="kw1">SET</span> counter <span class="sy0">=</span> counter <span class="sy0">+</span> <span class="nu0">1</span>;
+&nbsp;
+	<span class="kw1">END</span> WHILE;
+      <span class="kw1">END</span>;
+  <span class="kw1">ELSE</span>
+      <span class="kw1">BEGIN</span>
+	<span class="kw1">SET</span> output <span class="sy0">=</span> <span class="st0">'-1'</span>;
+      <span class="kw1">END</span>;
+  <span class="kw1">END</span> <span class="kw1">IF</span>;
+&nbsp;
+  <span class="kw1">RETURN</span> output;
+&nbsp;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;

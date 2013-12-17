@@ -1,0 +1,16 @@
+=====About=====
+====MongoDB====
+MongoDB (from "humongous") is an open-source document database, and the leading NoSQL database. Written in C++.
+
+====GridFS====
+GridFS is a specification for storing and retrieving files that exceed the BSON-document size limit of 16MB.
+=====Where we use it=====
+The Freetable file servers use GridFS for file storage.
+=====Why we use it=====
+GridFS is a very simple way to manage many many files that require no directory structure.
+=====External Links=====
+[[http://www.mongodb.org/]]
+
+[[http://docs.mongodb.org/manual/core/gridfs/]]
+
+=====Notes=====

@@ -1,0 +1,41 @@
+<span class="co1">-- MUST WRITE LOCK USERS BEFORE ISSUING THIS COMMAND!</span>
+&nbsp;
+DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">FUNCTION</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> create_wwfileid$$
+<span class="kw1">CREATE</span> <span class="kw1">FUNCTION</span> create_wwfileid <span class="br0">&#40;</span><span class="br0">&#41;</span>
+&nbsp;
+<span class="kw1">RETURNS</span> <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span>
+DETERMINISTIC
+&nbsp;
+  <span class="kw1">BEGIN</span>
+&nbsp;
+  <span class="kw1">DECLARE</span> output <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span>;
+  <span class="kw1">DECLARE</span> done_bool BOOL;
+  <span class="kw1">DECLARE</span> count_test <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span>;
+&nbsp;
+  <span class="kw1">SET</span> @username <span class="sy0">=</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> create_random_hash<span class="br0">&#40;</span><span class="nu0">32</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+  <span class="kw1">SET</span> output <span class="sy0">=</span> <span class="st0">'-1'</span>;
+  <span class="kw1">SET</span> done_bool <span class="sy0">=</span> <span class="kw1">FALSE</span>;
+&nbsp;
+  WHILE done_bool <span class="sy0">=</span> <span class="kw1">FALSE</span> DO
+    <span class="kw1">SET</span> done_bool <span class="sy0">=</span> <span class="kw1">TRUE</span>;
+    <span class="kw1">SET</span> @hash <span class="sy0">=</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> create_random_hash<span class="br0">&#40;</span><span class="nu0">255</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+    <span class="kw1">IF</span> <span class="br0">&#40;</span><span class="kw1">SELECT</span> <span class="kw1">COUNT</span><span class="br0">&#40;</span><span class="br0">&#40;</span><span class="kw1">SELECT</span> WWFILEID <span class="kw1">FROM</span> files <span class="kw1">WHERE</span> WWFILEID <span class="sy0">=</span> @hash<span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#41;</span> <span class="sy0">=</span> <span class="nu0">0</span> <span class="kw1">THEN</span> 
+      <span class="kw1">BEGIN</span>
+      <span class="co1">-- Try to create it</span>
+  <span class="kw1">INSERT</span> <span class="kw1">INTO</span> files <span class="kw1">SET</span> WWFILEID <span class="sy0">=</span> @hash;
+      <span class="kw1">END</span>;
+    <span class="kw1">ELSE</span>
+      <span class="kw1">BEGIN</span>
+      <span class="co1">-- Back around the loop</span>
+      <span class="kw1">SET</span> done_bool <span class="sy0">=</span> <span class="kw1">FALSE</span>;
+      <span class="kw1">END</span>;
+    <span class="kw1">END</span> <span class="kw1">IF</span>;
+&nbsp;
+  <span class="kw1">END</span> WHILE;
+&nbsp;
+  <span class="kw1">RETURN</span> @hash;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;

@@ -1,0 +1,14 @@
+=====About=====
+Redis is an open source, BSD licensed, advanced key-value store. It is often referred to as a data structure server since keys can contain strings, hashes, lists, sets and sorted sets.
+=====Where we use it=====
+Freetable chat servers use Redis's publication/subscription feature to maintain consistent, real-time communication between chat nodes.
+=====Why we use it=====
+Redis's publication/subscription feature is very easy to use with event based code ( like Ruby Celluloid or EventMachine ) and websockets to provide very easy pseudo real time server to client communication that is event driven and not polling driven.
+
+=====External Links=====
+[[http://redis.io/]]
+
+[[http://redis.io/topics/pubsub]]
+=====Notes=====
+See Also
+[[Celluloid]]

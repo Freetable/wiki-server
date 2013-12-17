@@ -1,0 +1,9 @@
+=====About=====
+Varnish is a web application accelerator. You install it in front of your web application and it will speed it up significantly.
+=====Where we use it=====
+Varnish is used to take most of the load off of the File server.
+=====Why we use it=====
+Most of our queries for files will come in bulk and can be served a lot faster from cache.
+=====External Links=====
+[[https://www.varnish-cache.org/]]
+=====Notes=====

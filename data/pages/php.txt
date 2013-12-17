@@ -1,0 +1,9 @@
+=====About=====
+PHP is a popular general-purpose scripting language that is especially suited to web development.
+=====Where we use it=====
+Freetable network services use PHP extensively.
+=====Why we use it=====
+PHP is a tried and true product that has allowed countless software projects to simplify the development of complex tasks.
+=====External Links=====
+[[http://www.php.net]]
+=====Notes=====

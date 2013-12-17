@@ -1,0 +1,39 @@
+DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> prepend_song_to_playlist$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> prepend_song_to_playlist<span class="br0">&#40;</span>uid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span><span class="sy0">,</span> fid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span><span class="sy0">,</span> playlist <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="sy0">,</span> fnid <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span><span class="br0">&#41;</span>
+<span class="kw1">BEGIN</span>
+ <span class="kw1">IF</span> <span class="br0">&#40;</span><span class="br0">&#40;</span><span class="kw1">SELECT</span> <span class="kw1">COUNT</span><span class="br0">&#40;</span>WWFILEID<span class="br0">&#41;</span> <span class="kw1">FROM</span> playlists <span class="kw1">WHERE</span> WWUSERID <span class="sy0">=</span> uid <span class="kw1">AND</span> WWFILEID <span class="sy0">=</span> fid <span class="kw1">AND</span> playlist_number <span class="sy0">=</span> playlist<span class="br0">&#41;</span> <span class="sy0">=</span> <span class="nu0">0</span><span class="br0">&#41;</span> <span class="kw1">THEN</span>
+      <span class="kw1">BEGIN</span>
+        <span class="kw1">CREATE</span> <span class="kw1">TEMPORARY</span> <span class="kw1">TABLE</span> my_playlist <span class="kw1">LIKE</span> playlists;
+&nbsp;
+        <span class="kw1">INSERT</span> <span class="kw1">INTO</span> my_playlist<span class="br0">&#40;</span>WWFILEID<span class="sy0">,</span> WWUSERID<span class="sy0">,</span> playlist_number<span class="sy0">,</span> order_number<span class="sy0">,</span> file_network<span class="br0">&#41;</span> <span class="kw1">SELECT</span> WWFILEID<span class="sy0">,</span> WWUSERID<span class="sy0">,</span> playlist_number<span class="sy0">,</span> order_number<span class="sy0">,</span> file_network <span class="kw1">FROM</span> playlists <span class="kw1">WHERE</span> WWUSERID<span class="sy0">=</span>uid <span class="kw1">AND</span> playlist_number <span class="sy0">=</span> playlist;
+&nbsp;
+ 		<span class="kw1">UPDATE</span> my_playlist <span class="kw1">SET</span> order_number <span class="sy0">=</span> <span class="br0">&#40;</span>order_number<span class="sy0">*</span><span class="nu0">10</span><span class="br0">&#41;</span><span class="sy0">+</span><span class="nu0">1</span>;
+&nbsp;
+ 		<span class="kw1">INSERT</span> <span class="kw1">INTO</span> my_playlist<span class="br0">&#40;</span>WWFILEID<span class="sy0">,</span> WWUSERID<span class="sy0">,</span> playlist_number<span class="sy0">,</span> order_number<span class="sy0">,</span> file_network<span class="br0">&#41;</span> <span class="kw1">VALUES</span><span class="br0">&#40;</span> fid<span class="sy0">,</span> uid<span class="sy0">,</span> playlist<span class="sy0">,</span> <span class="st0">'0'</span><span class="sy0">,</span> fnid <span class="br0">&#41;</span>;
+&nbsp;
+        <span class="kw1">ALTER</span> <span class="kw1">TABLE</span> my_playlist <span class="kw1">ADD</span> new_order_number <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span>;
+&nbsp;
+        <span class="kw1">SET</span> @counter <span class="sy0">=</span> <span class="nu0">1</span>;
+&nbsp;
+        <span class="kw1">UPDATE</span> my_playlist <span class="kw1">SET</span> new_order_number <span class="sy0">=</span> @counter :<span class="sy0">=</span> @counter <span class="sy0">+</span> <span class="nu0">1</span> <span class="kw1">ORDER</span> <span class="kw1">BY</span> order_number;
+&nbsp;
+        <span class="kw1">ALTER</span> <span class="kw1">TABLE</span> my_playlist <span class="kw1">DROP</span> order_number;
+&nbsp;
+        <span class="kw1">ALTER</span> <span class="kw1">TABLE</span> my_playlist <span class="kw1">CHANGE</span> new_order_number order_number <span class="kw1">INT</span> <span class="kw1">UNSIGNED</span>;
+&nbsp;
+        <span class="kw1">DELETE</span> <span class="kw1">FROM</span> playlists <span class="kw1">WHERE</span> WWUSERID<span class="sy0">=</span>uid <span class="kw1">AND</span> playlist_number <span class="sy0">=</span> playlist;
+&nbsp;
+        <span class="kw1">INSERT</span> <span class="kw1">INTO</span> playlists<span class="br0">&#40;</span>WWFILEID<span class="sy0">,</span> WWUSERID<span class="sy0">,</span> playlist_number<span class="sy0">,</span> order_number<span class="sy0">,</span> file_network<span class="br0">&#41;</span> <span class="kw1">SELECT</span> WWFILEID<span class="sy0">,</span> WWUSERID<span class="sy0">,</span> playlist_number<span class="sy0">,</span> order_number<span class="sy0">,</span> file_network <span class="kw1">FROM</span> my_playlist;
+&nbsp;
+        <span class="kw1">DROP</span> <span class="kw1">TABLE</span> my_playlist;
+&nbsp;
+      <span class="kw1">SELECT</span> <span class="st0">&quot;1&quot;</span>;
+      <span class="kw1">END</span>;
+    <span class="kw1">ELSE</span>
+      <span class="kw1">SELECT</span> <span class="st0">&quot;-1&quot;</span>;
+    <span class="kw1">END</span> <span class="kw1">IF</span>;
+<span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;

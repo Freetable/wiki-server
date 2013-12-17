@@ -1,0 +1,65 @@
+1385796069	98.232.38.159	C	defined_functions	ponyo	created	
+1385798072	98.232.38.159	E	defined_functions	ponyo	[SQL Stored Functions] 	
+1385798166	98.232.38.159	E	defined_functions	ponyo		
+1385798255	98.232.38.159	E	defined_functions	ponyo		
+1385798401	98.232.38.159	E	defined_functions	ponyo		
+1385798539	98.232.38.159	E	defined_functions	ponyo		
+1385801920	98.232.38.159	E	defined_functions	ponyo		
+1385802081	98.232.38.159	E	defined_functions	ponyo		
+1385806162	98.232.38.159	E	defined_functions	ponyo		
+1385811871	98.232.38.159	E	defined_functions	ponyo	[create_wwuserid] 	
+1385811904	98.232.38.159	E	defined_functions	ponyo	[create_wwuserid] 	
+1385811939	98.232.38.159	E	defined_functions	ponyo	[create_wwuserid] 	
+1385812443	98.232.38.159	E	defined_functions	ponyo		
+1385812512	98.232.38.159	E	defined_functions	ponyo		
+1385813113	98.232.38.159	E	defined_functions	ponyo	[validate_user] 	
+1385813477	98.232.38.159	E	defined_functions	ponyo		
+1385816616	98.232.38.159	E	defined_functions	ponyo	[validate_user(username VARCHAR(32), pass VARCHAR(128))] 	
+1385816789	98.232.38.159	E	defined_functions	ponyo	[create_wwuserid] 	
+1385817257	98.232.38.159	E	defined_functions	ponyo	[query_user] 	
+1385817296	98.232.38.159	E	defined_functions	ponyo	[set_password (username VARCHAR(32), pass VARCHAR(128))] 	
+1385817328	98.232.38.159	E	defined_functions	ponyo	[validate_user(username VARCHAR(32), pass VARCHAR(128))] 	
+1385817646	98.232.38.159	E	defined_functions	ponyo	[query_user(uid CHAR(255))] 	
+1385817690	98.232.38.159	E	defined_functions	ponyo	[create_random_hash(bits INT UNSIGNED)] 	
+1385817896	98.232.38.159	E	defined_functions	ponyo		
+1385818056	98.232.38.159	E	defined_functions	ponyo		
+1385818271	98.232.38.159	E	defined_functions	ponyo		
+1385818391	98.232.38.159	E	defined_functions	ponyo		
+1385818629	98.232.38.159	E	defined_functions	ponyo	[update_user] 	
+1385818871	98.232.38.159	E	defined_functions	ponyo		
+1385819013	98.232.38.159	E	defined_functions	ponyo		
+1385858153	98.232.38.159	E	defined_functions	ponyo	[set_user_email(uid CHAR(255), email VARCHAR(96))] 	
+1385858220	98.232.38.159	E	defined_functions	ponyo	[create_random_hash(bits INT UNSIGNED)] 	
+1385858280	98.232.38.159	E	defined_functions	ponyo	[create_wwuserid] 	
+1385858301	98.232.38.159	E	defined_functions	ponyo	[set_password (username VARCHAR(32), pass VARCHAR(128))] 	
+1385858361	98.232.38.159	E	defined_functions	ponyo	[create_random_hash(bits INT UNSIGNED)] 	
+1385858382	98.232.38.159	E	defined_functions	ponyo	[create_wwuserid] 	
+1385858405	98.232.38.159	E	defined_functions	ponyo	[set_password (username VARCHAR(32), pass VARCHAR(128))] 	
+1385858473	98.232.38.159	E	defined_functions	ponyo	[validate_user(username VARCHAR(32), pass VARCHAR(128))] 	
+1385858518	98.232.38.159	E	defined_functions	ponyo	[set_user_email(uid CHAR(255), email VARCHAR(96))] 	
+1385859591	98.232.38.159	E	defined_functions	ponyo	[set_user_email(uid CHAR(255), email VARCHAR(96))] 	
+1385860592	98.232.38.159	E	defined_functions	ponyo	[set_user_email(uid CHAR(255), eemail VARCHAR(96))] 	
+1385860697	98.232.38.159	E	defined_functions	ponyo	[set_user_nickname(uid CHAR(255), nickname VARCHAR(32))] 	
+1385860727	98.232.38.159	E	defined_functions	ponyo	[set_user_nickname(uid CHAR(255), nickname VARCHAR(32))] 	
+1385860743	98.232.38.159	E	defined_functions	ponyo	[set_user_nickname(uid CHAR(255), nickname VARCHAR(32))] 	
+1385860857	98.232.38.159	E	defined_functions	ponyo	[set_user_first_name(uid CHAR(255), first_name VARCHAR(32))] 	
+1385860963	98.232.38.159	E	defined_functions	ponyo	[set_user_last_name(uid CHAR(255), last_name VARCHAR(32))] 	
+1385861032	98.232.38.159	E	defined_functions	ponyo	[set_user_first_name(uid CHAR(255), first_name VARCHAR(32))] 	
+1385861192	98.232.38.159	E	defined_functions	ponyo	[set_user_short_description(uid CHAR(255), short_description VARCHAR(1024))] 	
+1385861215	98.232.38.159	E	defined_functions	ponyo	[set_user_last_name(uid CHAR(255), last_name VARCHAR(32))] 	
+1385861328	98.232.38.159	E	defined_functions	ponyo	[set_user_long_description(uid CHAR(255), long_description TEXT)] 	
+1385861476	98.232.38.159	E	defined_functions	ponyo	[delete_user(uid CHAR(255))] 	
+1385861950	98.232.38.159	E	defined_functions	ponyo	[get_current_playlist(uid CHAR(255))] 	
+1385862451	98.232.38.159	E	defined_functions	ponyo	[set_current_playlist(uid CHAR(255)), playlist_number INT UNSIGNED)] 	
+1385862519	98.232.38.159	E	defined_functions	ponyo	[get_current_song(uid CHAR(255))] 	
+1385862579	98.232.38.159	E	defined_functions	ponyo	[get_current_file(uid CHAR(255))] 	
+1385864315	98.232.38.159	E	defined_functions	ponyo	[get_playlist(uid CHAR(255), playlist_number INT UNSIGNED)] 	
+1385864448	98.232.38.159	E	defined_functions	ponyo	[get_playlist(uid CHAR(255), pplaylist_number INT UNSIGNED)] 	
+1385864621	98.232.38.159	E	defined_functions	ponyo	[get_avatar(uid CHAR(255))] 	
+1385864722	98.232.38.159	E	defined_functions	ponyo	[get_avatar(uid CHAR(255))] 	
+1385864734	98.232.38.159	E	defined_functions	ponyo	[get_sprite(uid CHAR(255))] 	
+1385864777	98.232.38.159	E	defined_functions	ponyo	[get_model(uid CHAR(255))] 	
+1385865038	98.232.38.159	E	defined_functions	ponyo	[set_avatar(uid CHAR(255), bdata BLOB, type INT UNSIGNED)] 	
+1385865103	98.232.38.159	E	defined_functions	ponyo	[set_sprite(uid CHAR(255), bdata BLOB, type INT UNSIGNED)] 	
+1385865206	98.232.38.159	E	defined_functions	ponyo	[set_model(uid CHAR(255), bdata BLOB, type INT UNSIGNED)] 	
+1385866516	98.232.38.159	E	defined_functions	ponyo	[rearrange_playlist(uid CHAR(255), playlist_number INT UNSIGNED, pl_from INT UNSIGNED, pl_to INT UNSIGNED)] 	

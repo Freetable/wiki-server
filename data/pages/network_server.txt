@@ -1,0 +1,38 @@
+=====About=====
+The network server for Freetable Provides the network services needed to keep the network in sync.  Just metadata is stored with the network services.
+
+=====Problem=====
+For roaming profiles to work there must be some sort of central repository of information that we can all agree upon.
+
+=====Solution=====
+Using a combination of SQL, PHP and Nginx we can achieve lazy load balancing very easy while maintaining a consistent dataset.
+
+====Hardware====
+Just about anything can be used for hardware.  We suggest at least 4 GB of RAM, and at least 100 GB of live growable partition with solid state speeds.  We suggest at least 4 64 bit cores.  The main operating system Freetable was designed for was Debian Linux.  However, there is no reason that any operating system that supports Percona, Nginx, and PHP could be used in place of Debian Linux.
+
+====Software====
+Our software stack for the network services consists of nginx, PHP, and SQL.  A SQL proxy / caching layer should be added here to speed up read queries.  HA-proxy can be used to split the incoming queries between a read only read pool and the write server.  This allows for a pool of read slaves to act as load offloaders.
+
+===Nginx===
+Nothing really special is needed from Nginx.  We configure Nginx to use PHP-FPM in the backend and set it for file based communication.  You could also socket based communication and offload the PHP to another server.  However, Nginx is so light it's very hard to justify ever needing to do this when smarter things like ha-proxy upstream can distribute the load so much better.
+
+===PHP===
+PHP will use the PHP-FPM configuration to maintain a scalable PHP process pool.  The suggestion is to set the max threads to 4x what max processors of the server is.  No additional special configuration is needed from php.
+
+Modules Needed:
+  * php-mysql
+  * php-json
+
+===SQL===
+Percona Server will be used as a drop in, high end replacement for MySQL.  Freetable network services will rely heavily on store procedures and Percona internals to keep the data set consistent.  
+
+
+=====Defined Functions=====
+[[Network Services Database Defined Functions]]
+
+[[Network Services Server Frontend Defined Functions]]
+
+[[Network Services Client Frontend Defined Functions]]
+
+=====External Links=====
+=====Notes=====

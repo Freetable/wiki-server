@@ -1,0 +1,11 @@
+DELIMITER $$
+&nbsp;
+<span class="kw1">DROP</span> <span class="kw1">PROCEDURE</span> <span class="kw1">IF</span> <span class="kw1">EXISTS</span> add_server_to_file_list$$
+<span class="kw1">CREATE</span> <span class="kw1">PROCEDURE</span> add_server_to_file_list<span class="br0">&#40;</span>fid <span class="kw1">CHAR</span><span class="br0">&#40;</span><span class="nu0">128</span><span class="br0">&#41;</span><span class="sy0">,</span> uurl <span class="kw1">VARCHAR</span><span class="br0">&#40;</span><span class="nu0">384</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+  <span class="kw1">BEGIN</span>
+&nbsp;
+    <span class="kw1">INSERT</span> <span class="kw1">INTO</span> file_to_servers <span class="kw1">SET</span> WWFIELDID <span class="sy0">=</span> fid<span class="sy0">,</span> url <span class="sy0">=</span> uurl<span class="sy0">,</span> last_verified <span class="sy0">=</span> NOW<span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="kw1">END</span>$$
+&nbsp;
+DELIMITER ;

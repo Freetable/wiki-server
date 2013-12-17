@@ -1,0 +1,40 @@
+DELIMITER $$
+&nbsp;
+DROP PROCEDURE IF EXISTS prepend_song_to_playlist$$
+CREATE PROCEDURE prepend_song_to_playlist(uid CHAR(128), fid CHAR(128), playlist INT UNSIGNED, fnid INT UNSIGNED)
+BEGIN
+ IF ((SELECT COUNT(WWFILEID) FROM playlists WHERE WWUSERID = uid AND WWFILEID = fid AND playlist_number = playlist) = 0) THEN
+      BEGIN
+        CREATE TEMPORARY TABLE my_playlist LIKE playlists;
+        INSERT INTO my_playlist(WWFILEID, WWUSERID, playlist_number, order_number, file_network) select WWFILEID, WWUSERID, playlist_number, order_number, file_network from playlists WHERE WWUSERID=uid AND playlist_number = playlist;
+        ALTER TABLE my_playlist ADD new_order_number INT UNSIGNED;
+&nbsp;
+        DECLARE row_count INT UNSIGNED;
+        DECLARE counter INT UNSIGNED;
+        DECLARE mfid CHAR(128);
+&nbsp;
+        SET row_count = (SELECT COUNT(*) FROM my_playlist);
+        SET counter = 0;
+&nbsp;
+        WHILE counter &lt; row_count DO
+          BEGIN
+            SET counter = counter + 1;
+            SET mfid = (SELECT WWFILEID FROM my_playlist WHERE MIN(order_number);
+            UPDATE my_playlist SET new_order_number = counter, order_number = '' WHERE WWFILEID = mfid;
+          END;
+        END WHILE;
+        ALTER TABLE my_playlist DROP order_number;
+        ALTER TABLE my_playlist CHANGE new_order_number order_number INT UNSIGNED;
+&nbsp;
+        DELETE FROM playlists WHERE WWUSERID=uid AND playlist_number = playlist;
+&nbsp;
+        INSERT INTO playlists(WWFILEID, WWUSERID, playlist_number, order_number, file_network) select WWFILEID, WWUSERID, playlist_number, order_number, file_network from my_playlist;
+        DROP TABLE my_playlist;
+      SELECT &quot;1&quot;;
+      END;
+    ELSE
+      SELECT &quot;-1&quot;;
+    END IF;
+END$$
+&nbsp;
+DELIMITER ;

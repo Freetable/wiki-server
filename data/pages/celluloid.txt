@@ -1,0 +1,12 @@
+=====About=====
+Celluloid is a concurrent object oriented programming framework for Ruby which lets you build multithreaded programs out of concurrent objects just as easily as you build sequential programs out of regular objects
+
+=====Where we use it=====
+Celluloid is used for event based communication between the server and the client after page loads.
+=====Why we use it=====
+Celluloid allows for the use of Rubinius and true multi threading per process for Ruby because of the removal of the Global Interpreter Lock or the GIL for short.
+=====External Links=====
+[[http://celluloid.io/]]
+
+[[http://rubini.us/]]
+=====Notes=====
