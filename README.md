@@ -1,0 +1,4 @@
+wiki-server
+===========
+
+Freetable wiki
